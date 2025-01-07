@@ -1,5 +1,4 @@
 package dao;
-import service.PasswordUtils;
 
 public class User {
     private static int idCounter = 1;
@@ -13,10 +12,9 @@ public class User {
         this.id = idCounter++;
         this.name = name;
         this.username = username;
-        this.password = PasswordUtils.hashPassword(password);
-        this.role = role;
+        this.password = password;
+        setRole(role);
     }
-
 
     public int getId() {
         return id;
@@ -37,9 +35,11 @@ public class User {
     public String getRole() {
         return role;
     }
+
     public void setId(int id) {
         this.id = id;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -53,6 +53,10 @@ public class User {
     }
 
     public void setRole(String role) {
-        this.role = role;
+        if (role.equals("admin") || role.equals("auditeur")) {
+            this.role = role;
+        } else {
+            throw new IllegalArgumentException("Role must be either 'admin' or 'auditeur'");
+        }
     }
 }

@@ -1,11 +1,11 @@
 package dao;
 
-public class Processus {
+public class Preuve {
     private int id;
-    private String description;
     private String name;
     private int organisationId;
-    private int responsableId;
+    private int systemexigenceId;
+    private String url;
 
     // Getters and Setters
     public int getId() {
@@ -14,14 +14,6 @@ public class Processus {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getName() {
@@ -40,11 +32,19 @@ public class Processus {
         this.organisationId = organisationId;
     }
 
-    public int getResponsableId() {
-        return responsableId;
+    public int getSystemexigenceId() {
+        return systemexigenceId;
     }
 
-    public void setResponsableId(int responsableId) {
-        this.responsableId = responsableId;
+    public void setSystemexigenceId(int systemexigenceId) {
+        this.systemexigenceId = systemexigenceId;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

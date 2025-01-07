@@ -1,11 +1,10 @@
 package dao;
 
-public class Processus {
+public class AutreExigence {
     private int id;
     private String description;
     private String name;
-    private int organisationId;
-    private int responsableId;
+    private String type;
 
     // Getters and Setters
     public int getId() {
@@ -32,19 +31,11 @@ public class Processus {
         this.name = name;
     }
 
-    public int getOrganisationId() {
-        return organisationId;
+    public String getType() {
+        return type;
     }
 
-    public void setOrganisationId(int organisationId) {
-        this.organisationId = organisationId;
-    }
-
-    public int getResponsableId() {
-        return responsableId;
-    }
-
-    public void setResponsableId(int responsableId) {
-        this.responsableId = responsableId;
+    public void setType(String type) {
+        this.type = type;
     }
 }

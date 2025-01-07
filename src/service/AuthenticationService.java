@@ -6,14 +6,14 @@ import java.util.List;
 public class AuthenticationService {
     private GestionUsers gestionUsers = new GestionUsers();
 
-    public boolean authenticate(String username, String password) {
+    public User authenticate(String username, String password) {
         List<User> users = gestionUsers.getAllUsers();
         for (User user : users) {
-            if (user.getUsername().equals(username) && user.getPassword().equals(PasswordUtils.hashPassword(password))) {
-                return true;
+            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+                return user;
             }
         }
-        return false;
+        return null;
     }
 
     public User getUserByUsername(String username) {

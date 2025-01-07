@@ -30,8 +30,10 @@ public class Login extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String username = usernameField.getText();
                 String password = new String(passwordField.getPassword());
-                if (authService.authenticate(username, password)) {
+                User user = authService.authenticate(username, password);
+                if (user != null) {
                     JOptionPane.showMessageDialog(null, "Login successful!");
+                    redirectToDashboard(user);
                 } else {
                     JOptionPane.showMessageDialog(null, "Invalid username or password.");
                 }
@@ -61,6 +63,15 @@ public class Login extends JFrame {
         loginButton = new JButton("Login");
         loginButton.setBounds(10, 80, 255, 25);
         panel.add(loginButton);
+    }
+
+    private void redirectToDashboard(User user) {
+        if (user.getRole().equals("admin")) {
+            new DashboardAdmin().setVisible(true);
+        } else if (user.getRole().equals("auditeur")) {
+            // new DashboardAuditeur().setVisible(true);
+        }
+        this.dispose();
     }
 
     public static void main(String[] args) {
