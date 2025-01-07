@@ -1,9 +1,9 @@
 package ui;
 
+import dao.Standard;
+import dao.Clause;
 import service.GestionClauses;
 import service.GestionStandards;
-import dao.Clause;
-import dao.Standard;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -11,19 +11,20 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.ArrayList;
 
-public class GestionClausesUI extends JFrame {
+public class StandardDetailsUI extends JFrame {
+    private Standard standard;
     private GestionClauses gestionClauses;
     private GestionStandards gestionStandards;
     private JTable table;
     private DefaultTableModel tableModel;
 
-    public GestionClausesUI() {
-        gestionClauses = new GestionClauses();
-        gestionStandards = new GestionStandards();
+    public StandardDetailsUI(Standard standard) {
+        this.standard = standard;
+        this.gestionClauses = new GestionClauses();
+        this.gestionStandards = new GestionStandards();
 
-        setTitle("Gérer les Clauses");
+        setTitle("Détails du Standard");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -31,14 +32,16 @@ public class GestionClausesUI extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
         add(panel);
 
-        JButton addButton = new JButton("Ajouter Clause");
-        panel.add(addButton, BorderLayout.NORTH);
+        JPanel detailsPanel = new JPanel(new GridLayout(2, 1));
+        JLabel descriptionLabel = new JLabel("Description: " + standard.getDescription());
+        JLabel referenceLabel = new JLabel("Référence: " + standard.getReference());
+        detailsPanel.add(descriptionLabel);
+        detailsPanel.add(referenceLabel);
+        panel.add(detailsPanel, BorderLayout.NORTH);
 
-        tableModel = new DefaultTableModel(new Object[]{"ID", "Description", "Référence", "Détails", "Editer", "Supprimer"}, 0);
+        tableModel = new DefaultTableModel(new Object[]{"ID", "Description", "Référence", "Editer", "Supprimer"}, 0);
         table = new JTable(tableModel);
 
-        table.getColumn("Détails").setCellRenderer(new ButtonRenderer());
-        table.getColumn("Détails").setCellEditor(new ButtonEditor(new JCheckBox(), this, false, true));
         table.getColumn("Editer").setCellRenderer(new ButtonRenderer());
         table.getColumn("Editer").setCellEditor(new ButtonEditor(new JCheckBox(), this, true, false));
         table.getColumn("Supprimer").setCellRenderer(new ButtonRenderer());
@@ -46,6 +49,11 @@ public class GestionClausesUI extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton addButton = new JButton("Ajouter Clause");
+        buttonPanel.add(addButton);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
 
         loadClauses();
 
@@ -58,18 +66,17 @@ public class GestionClausesUI extends JFrame {
     }
 
     private void loadClauses() {
-        List<Clause> clauses = gestionClauses.getAllClauses();
+        List<Clause> clauses = standard.getClauses();
         tableModel.setRowCount(0); // Clear existing rows
 
         if (clauses.isEmpty()) {
-            tableModel.addRow(new Object[]{"Vide", "Vide", "Vide", "Détails", "Editer", "Supprimer"});
+            tableModel.addRow(new Object[]{"Vide", "Vide", "Vide", "Editer", "Supprimer"});
         } else {
             for (Clause clause : clauses) {
                 tableModel.addRow(new Object[]{
                         clause.getId(),
                         clause.getDescription(),
                         clause.getReference(),
-                        "Détails",
                         "Editer",
                         "Supprimer"
                 });
@@ -84,7 +91,10 @@ public class GestionClausesUI extends JFrame {
             Clause clause = new Clause();
             clause.setDescription(description);
             clause.setReference(reference);
+            clause.addStandard(standard); // Lier la clause au standard
+            standard.addClause(clause); // Ajouter la clause au standard
             gestionClauses.addClause(clause);
+            gestionStandards.updateStandard(standard.getId(), standard); // Mettre à jour le standard
             loadClauses();
         }
     }
@@ -107,23 +117,9 @@ public class GestionClausesUI extends JFrame {
         int confirm = JOptionPane.showConfirmDialog(this, "Êtes-vous sûr de vouloir supprimer cette clause?", "Confirmation", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             gestionClauses.deleteClause(id);
+            standard.getClauses().removeIf(clause -> clause.getId() == id); // Supprimer la clause du standard
+            gestionStandards.updateStandard(standard.getId(), standard); // Mettre à jour le standard
             loadClauses();
         }
-    }
-
-    public void viewDetails(int id) {
-        Clause clause = gestionClauses.getClause(id);
-        if (clause != null) {
-            new ClauseDetailsUI(clause).setVisible(true);
-        }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new GestionClausesUI().setVisible(true);
-            }
-        });
     }
 }

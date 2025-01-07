@@ -1,14 +1,12 @@
 package service;
 
 import dao.Clause;
-import dao.Standard;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GestionClauses {
-    private static final String FILE_PATH = "c:/Users/HP/gestion_audits/src/database/clauses.txt";
-    private GestionStandards gestionStandards = new GestionStandards();
+    private static final String FILE_PATH = System.getProperty("user.dir") + "/src/database/clauses.ser";
 
     public void addClause(Clause clause) {
         List<Clause> clauses = getAllClauses();
@@ -28,23 +26,9 @@ public class GestionClauses {
 
     public List<Clause> getAllClauses() {
         List<Clause> clauses = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",");
-                if (parts.length == 4) {
-                    Clause clause = new Clause();
-                    clause.setId(Integer.parseInt(parts[0]));
-                    clause.setDescription(parts[1]);
-                    clause.setReference(parts[2]);
-                    List<Standard> standards = gestionStandards.getStandardsByIds(parts[3]);
-                    for (Standard standard : standards) {
-                        clause.addStandard(standard);
-                    }
-                    clauses.add(clause);
-                }
-            }
-        } catch (IOException e) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_PATH))) {
+            clauses = (List<Clause>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return clauses;
@@ -63,20 +47,18 @@ public class GestionClauses {
 
     public void deleteClause(int id) {
         List<Clause> clauses = getAllClauses();
-        clauses.removeIf(clause -> clause.getId() == id);
-        saveClausesToFile(clauses);
+        for (int i = 0; i < clauses.size(); i++) {
+            if (clauses.get(i).getId() == id) {
+                clauses.remove(i);
+                saveClausesToFile(clauses);
+                return;
+            }
+        }
     }
 
     private void saveClausesToFile(List<Clause> clauses) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PATH))) {
-            for (Clause clause : clauses) {
-                StringBuilder standardsIds = new StringBuilder();
-                for (Standard standard : clause.getStandards()) {
-                    standardsIds.append(standard.getId()).append(";");
-                }
-                bw.write(clause.getId() + "," + clause.getDescription() + "," + clause.getReference() + "," + standardsIds.toString());
-                bw.newLine();
-            }
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH))) {
+            oos.writeObject(clauses);
         } catch (IOException e) {
             e.printStackTrace();
         }

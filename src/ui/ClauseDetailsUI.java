@@ -1,9 +1,9 @@
 package ui;
 
+import dao.Clause;
+import dao.Standard;
 import service.GestionStandards;
 import service.GestionClauses;
-import dao.Standard;
-import dao.Clause;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -11,19 +11,20 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import java.util.ArrayList;
 
-public class GestionStandardsUI extends JFrame {
+public class ClauseDetailsUI extends JFrame {
+    private Clause clause;
     private GestionStandards gestionStandards;
     private GestionClauses gestionClauses;
     private JTable table;
     private DefaultTableModel tableModel;
 
-    public GestionStandardsUI() {
-        gestionStandards = new GestionStandards();
-        gestionClauses = new GestionClauses();
+    public ClauseDetailsUI(Clause clause) {
+        this.clause = clause;
+        this.gestionStandards = new GestionStandards();
+        this.gestionClauses = new GestionClauses();
 
-        setTitle("Gérer les Standards");
+        setTitle("Détails de la Clause");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -31,14 +32,16 @@ public class GestionStandardsUI extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
         add(panel);
 
-        JButton addButton = new JButton("Ajouter Standard");
-        panel.add(addButton, BorderLayout.NORTH);
+        JPanel detailsPanel = new JPanel(new GridLayout(2, 1));
+        JLabel descriptionLabel = new JLabel("Description: " + clause.getDescription());
+        JLabel referenceLabel = new JLabel("Référence: " + clause.getReference());
+        detailsPanel.add(descriptionLabel);
+        detailsPanel.add(referenceLabel);
+        panel.add(detailsPanel, BorderLayout.NORTH);
 
-        tableModel = new DefaultTableModel(new Object[]{"ID", "Description", "Référence", "Détails", "Editer", "Supprimer"}, 0);
+        tableModel = new DefaultTableModel(new Object[]{"ID", "Description", "Référence", "Editer", "Supprimer"}, 0);
         table = new JTable(tableModel);
 
-        table.getColumn("Détails").setCellRenderer(new ButtonRenderer());
-        table.getColumn("Détails").setCellEditor(new ButtonEditor(new JCheckBox(), this, false, true));
         table.getColumn("Editer").setCellRenderer(new ButtonRenderer());
         table.getColumn("Editer").setCellEditor(new ButtonEditor(new JCheckBox(), this, true, false));
         table.getColumn("Supprimer").setCellRenderer(new ButtonRenderer());
@@ -46,6 +49,11 @@ public class GestionStandardsUI extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(table);
         panel.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton addButton = new JButton("Ajouter Standard");
+        buttonPanel.add(addButton);
+        panel.add(buttonPanel, BorderLayout.SOUTH);
 
         loadStandards();
 
@@ -58,18 +66,17 @@ public class GestionStandardsUI extends JFrame {
     }
 
     private void loadStandards() {
-        List<Standard> standards = gestionStandards.getAllStandards();
+        List<Standard> standards = clause.getStandards();
         tableModel.setRowCount(0); // Clear existing rows
 
         if (standards.isEmpty()) {
-            tableModel.addRow(new Object[]{"Vide", "Vide", "Vide", "Détails", "Editer", "Supprimer"});
+            tableModel.addRow(new Object[]{"Vide", "Vide", "Vide", "Editer", "Supprimer"});
         } else {
             for (Standard standard : standards) {
                 tableModel.addRow(new Object[]{
                         standard.getId(),
                         standard.getDescription(),
                         standard.getReference(),
-                        "Détails",
                         "Editer",
                         "Supprimer"
                 });
@@ -84,7 +91,10 @@ public class GestionStandardsUI extends JFrame {
             Standard standard = new Standard();
             standard.setDescription(description);
             standard.setReference(reference);
+            standard.addClause(clause); // Lier le standard à la clause
+            clause.addStandard(standard); // Ajouter le standard à la clause
             gestionStandards.addStandard(standard);
+            gestionClauses.updateClause(clause.getId(), clause); // Mettre à jour la clause
             loadStandards();
         }
     }
@@ -107,23 +117,9 @@ public class GestionStandardsUI extends JFrame {
         int confirm = JOptionPane.showConfirmDialog(this, "Êtes-vous sûr de vouloir supprimer ce standard?", "Confirmation", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             gestionStandards.deleteStandard(id);
+            clause.getStandards().removeIf(standard -> standard.getId() == id); // Supprimer le standard de la clause
+            gestionClauses.updateClause(clause.getId(), clause); // Mettre à jour la clause
             loadStandards();
         }
-    }
-
-    public void viewDetails(int id) {
-        Standard standard = gestionStandards.getStandard(id);
-        if (standard != null) {
-            new StandardDetailsUI(standard).setVisible(true);
-        }
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new GestionStandardsUI().setVisible(true);
-            }
-        });
     }
 }

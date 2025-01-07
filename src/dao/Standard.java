@@ -1,13 +1,22 @@
 package dao;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.ArrayList;
 
-public class Standard {
+public class Standard implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+    private static int idCounter = 1;
     private int id;
     private String description;
     private String reference;
     private List<Clause> clauses;
+
+    public Standard() {
+        this.id = idCounter++;
+        this.clauses = new ArrayList<>();
+    }
 
     // Getters and Setters
     public int getId() {
@@ -39,17 +48,10 @@ public class Standard {
     }
 
     public void setClauses(List<Clause> clauses) {
-        if (this.clauses == null) {
-            this.clauses = clauses;
-        } else {
-            this.clauses.addAll(clauses);
-        }
+        this.clauses = clauses;
     }
 
     public void addClause(Clause clause) {
-        if (this.clauses == null) {
-            this.clauses = new ArrayList<>();
-        }
         this.clauses.add(clause);
     }
 }

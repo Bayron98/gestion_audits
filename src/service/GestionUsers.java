@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GestionUsers {
-    private static final String FILE_PATH = "c:/Users/badrb/gestion_audits/src/database/users.txt";
+    private static final String FILE_PATH = System.getProperty("user.dir") + "/src/database/users.txt";
 
     public void addUser(User user) {
         List<User> users = getAllUsers();

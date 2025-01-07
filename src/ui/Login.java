@@ -32,7 +32,6 @@ public class Login extends JFrame {
                 String password = new String(passwordField.getPassword());
                 User user = authService.authenticate(username, password);
                 if (user != null) {
-                    JOptionPane.showMessageDialog(null, "Login successful!");
                     redirectToDashboard(user);
                 } else {
                     JOptionPane.showMessageDialog(null, "Invalid username or password.");
@@ -67,9 +66,9 @@ public class Login extends JFrame {
 
     private void redirectToDashboard(User user) {
         if (user.getRole().equals("admin")) {
-            new DashboardAdmin().setVisible(true);
+            new DashboardAdmin(user).setVisible(true);
         } else if (user.getRole().equals("auditeur")) {
-            // new DashboardAuditeur().setVisible(true);
+            // new DashboardAuditeur(user).setVisible(true);
         }
         this.dispose();
     }
