@@ -4,8 +4,8 @@ public class Processus {
     private int id;
     private String description;
     private String name;
-    private int organisationId;
-    private int responsableId;
+    private Organisation organisation;
+    private Responsable responsable;
 
     // Getters and Setters
     public int getId() {
@@ -32,19 +32,19 @@ public class Processus {
         this.name = name;
     }
 
-    public int getOrganisationId() {
-        return organisationId;
+    public Organisation getOrganisation() {
+        return organisation;
     }
 
-    public void setOrganisationId(int organisationId) {
-        this.organisationId = organisationId;
+    public void setOrganisation(Organisation organisation) {
+        this.organisation = organisation;
     }
 
-    public int getResponsableId() {
-        return responsableId;
+    public Responsable getResponsable() {
+        return responsable;
     }
 
-    public void setResponsableId(int responsableId) {
-        this.responsableId = responsableId;
+    public void setResponsable(Responsable responsable) {
+        this.responsable = responsable;
     }
 }
