@@ -1,12 +1,15 @@
 package dao;
 
-public class SystemeManagement {
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class SystemeManagement implements Serializable {
     private int id;
     private String description;
-    private int nbrPersonnes;
     private String nom;
-    private Organisation organisation;
     private Responsable responsable;
+    private List<Processus> processus = new ArrayList<>();
 
     // Getters and Setters
     public int getId() {
@@ -25,14 +28,6 @@ public class SystemeManagement {
         this.description = description;
     }
 
-    public int getNbrPersonnes() {
-        return nbrPersonnes;
-    }
-
-    public void setNbrPersonnes(int nbrPersonnes) {
-        this.nbrPersonnes = nbrPersonnes;
-    }
-
     public String getNom() {
         return nom;
     }
@@ -41,19 +36,23 @@ public class SystemeManagement {
         this.nom = nom;
     }
 
-    public Organisation getOrganisation() {
-        return organisation;
-    }
-
-    public void setOrganisation(Organisation organisation) {
-        this.organisation = organisation;
-    }
-
     public Responsable getResponsable() {
         return responsable;
     }
 
     public void setResponsable(Responsable responsable) {
         this.responsable = responsable;
+    }
+
+    public List<Processus> getProcessus() {
+        return processus;
+    }
+
+    public void setProcessus(List<Processus> processus) {
+        this.processus = processus;
+    }
+
+    public void addProcessus(Processus processus) {
+        this.processus.add(processus);
     }
 }

@@ -1,10 +1,11 @@
 package dao;
 
-public class Processus {
+import java.io.Serializable;
+
+public class Processus implements Serializable {
     private int id;
     private String description;
     private String name;
-    private Organisation organisation;
     private Responsable responsable;
 
     // Getters and Setters
@@ -31,19 +32,9 @@ public class Processus {
     public void setName(String name) {
         this.name = name;
     }
-
-    public Organisation getOrganisation() {
-        return organisation;
-    }
-
-    public void setOrganisation(Organisation organisation) {
-        this.organisation = organisation;
-    }
-
     public Responsable getResponsable() {
         return responsable;
     }
-
     public void setResponsable(Responsable responsable) {
         this.responsable = responsable;
     }

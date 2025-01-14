@@ -10,6 +10,7 @@ public class GestionClauses {
 
     public void addClause(Clause clause) {
         List<Clause> clauses = getAllClauses();
+        clause.setId(clauses.size() + 1);
         clauses.add(clause);
         saveClausesToFile(clauses);
     }

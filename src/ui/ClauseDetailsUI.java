@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ClauseDetailsUI extends JFrame {
     private Clause clause;
@@ -43,12 +44,30 @@ public class ClauseDetailsUI extends JFrame {
         table = new JTable(tableModel);
 
         table.getColumn("Editer").setCellRenderer(new ButtonRenderer());
-        table.getColumn("Editer").setCellEditor(new ButtonEditor(new JCheckBox(), this, true, false));
+        table.getColumn("Editer").setCellEditor(new DefaultCellEditor(new JCheckBox()) {
+            @Override
+            public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+                editStandard((int) table.getValueAt(row, 0));
+                return null;
+            }
+        });
+
         table.getColumn("Supprimer").setCellRenderer(new ButtonRenderer());
-        table.getColumn("Supprimer").setCellEditor(new ButtonEditor(new JCheckBox(), this, false, false));
+        table.getColumn("Supprimer").setCellEditor(new DefaultCellEditor(new JCheckBox()) {
+            @Override
+            public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+                deleteStandard((int) table.getValueAt(row, 0));
+                return null;
+            }
+        });
 
         JScrollPane scrollPane = new JScrollPane(table);
-        panel.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel tablePanel = new JPanel(new BorderLayout());
+        JLabel tableTitle = new JLabel("Liste des Standards rattachés à la Clause");
+        tablePanel.add(tableTitle, BorderLayout.NORTH);
+        tablePanel.add(scrollPane, BorderLayout.CENTER);
+        panel.add(tablePanel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton addButton = new JButton("Ajouter Standard");
@@ -66,13 +85,26 @@ public class ClauseDetailsUI extends JFrame {
     }
 
     private void loadStandards() {
-        List<Standard> standards = clause.getStandards();
+        List<Standard> allStandards = gestionStandards.getAllStandards();
+        List<Standard> clauseStandards = clause.getStandards();
+
+        // Synchroniser les standards de la clause avec ceux dans standards.ser
+        List<Standard> synchronizedStandards = clauseStandards.stream()
+                .map(clauseStandard -> allStandards.stream()
+                        .filter(standard -> standard.getId() == clauseStandard.getId())
+                        .findFirst()
+                        .orElse(clauseStandard))
+                .collect(Collectors.toList());
+
+        clause.setStandards(synchronizedStandards);
+        gestionClauses.updateClause(clause.getId(), clause);
+
         tableModel.setRowCount(0); // Clear existing rows
 
-        if (standards.isEmpty()) {
+        if (synchronizedStandards.isEmpty()) {
             tableModel.addRow(new Object[]{"Vide", "Vide", "Vide", "Editer", "Supprimer"});
         } else {
-            for (Standard standard : standards) {
+            for (Standard standard : synchronizedStandards) {
                 tableModel.addRow(new Object[]{
                         standard.getId(),
                         standard.getDescription(),
@@ -85,12 +117,20 @@ public class ClauseDetailsUI extends JFrame {
     }
 
     private void addStandard() {
-        String description = JOptionPane.showInputDialog(this, "Description:");
-        String reference = JOptionPane.showInputDialog(this, "Référence:");
-        if (description != null && reference != null) {
+        JTextField descriptionField = new JTextField();
+        JTextField referenceField = new JTextField();
+
+        JPanel panel = new JPanel(new GridLayout(2, 2));
+        panel.add(new JLabel("Description:"));
+        panel.add(descriptionField);
+        panel.add(new JLabel("Référence:"));
+        panel.add(referenceField);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Ajouter Standard", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
             Standard standard = new Standard();
-            standard.setDescription(description);
-            standard.setReference(reference);
+            standard.setDescription(descriptionField.getText());
+            standard.setReference(referenceField.getText());
             standard.addClause(clause); // Lier le standard à la clause
             clause.addStandard(standard); // Ajouter le standard à la clause
             gestionStandards.addStandard(standard);
@@ -102,12 +142,23 @@ public class ClauseDetailsUI extends JFrame {
     public void editStandard(int id) {
         Standard standard = gestionStandards.getStandard(id);
         if (standard != null) {
-            String description = JOptionPane.showInputDialog(this, "Description:", standard.getDescription());
-            String reference = JOptionPane.showInputDialog(this, "Référence:", standard.getReference());
-            if (description != null && reference != null) {
-                standard.setDescription(description);
-                standard.setReference(reference);
+            JTextField descriptionField = new JTextField(standard.getDescription());
+            JTextField referenceField = new JTextField(standard.getReference());
+
+            JPanel panel = new JPanel(new GridLayout(2, 2));
+            panel.add(new JLabel("Description:"));
+            panel.add(descriptionField);
+            panel.add(new JLabel("Référence:"));
+            panel.add(referenceField);
+
+            int result = JOptionPane.showConfirmDialog(null, panel, "Editer Standard", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (result == JOptionPane.OK_OPTION) {
+                standard.setDescription(descriptionField.getText());
+                standard.setReference(referenceField.getText());
                 gestionStandards.updateStandard(id, standard);
+                clause.getStandards().removeIf(s -> s.getId() == id);
+                clause.addStandard(standard); // Synchroniser avec la clause
+                gestionClauses.updateClause(clause.getId(), clause); // Mettre à jour la clause
                 loadStandards();
             }
         }

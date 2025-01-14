@@ -7,14 +7,12 @@ import java.util.ArrayList;
 public class Standard implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    private static int idCounter = 1;
     private int id;
     private String description;
     private String reference;
     private List<Clause> clauses;
 
     public Standard() {
-        this.id = idCounter++;
         this.clauses = new ArrayList<>();
     }
 

@@ -10,6 +10,7 @@ public class GestionStandards {
 
     public void addStandard(Standard standard) {
         List<Standard> standards = getAllStandards();
+        standard.setId(standards.size() + 1);
         standards.add(standard);
         saveStandardsToFile(standards);
     }

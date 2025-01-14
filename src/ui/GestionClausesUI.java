@@ -78,12 +78,20 @@ public class GestionClausesUI extends JFrame {
     }
 
     private void addClause() {
-        String description = JOptionPane.showInputDialog(this, "Description:");
-        String reference = JOptionPane.showInputDialog(this, "Référence:");
-        if (description != null && reference != null) {
+        JTextField descriptionField = new JTextField();
+        JTextField referenceField = new JTextField();
+
+        JPanel panel = new JPanel(new GridLayout(2, 2));
+        panel.add(new JLabel("Description:"));
+        panel.add(descriptionField);
+        panel.add(new JLabel("Référence:"));
+        panel.add(referenceField);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Ajouter Clause", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
             Clause clause = new Clause();
-            clause.setDescription(description);
-            clause.setReference(reference);
+            clause.setDescription(descriptionField.getText());
+            clause.setReference(referenceField.getText());
             gestionClauses.addClause(clause);
             loadClauses();
         }
@@ -92,11 +100,19 @@ public class GestionClausesUI extends JFrame {
     public void editClause(int id) {
         Clause clause = gestionClauses.getClause(id);
         if (clause != null) {
-            String description = JOptionPane.showInputDialog(this, "Description:", clause.getDescription());
-            String reference = JOptionPane.showInputDialog(this, "Référence:", clause.getReference());
-            if (description != null && reference != null) {
-                clause.setDescription(description);
-                clause.setReference(reference);
+            JTextField descriptionField = new JTextField(clause.getDescription());
+            JTextField referenceField = new JTextField(clause.getReference());
+
+            JPanel panel = new JPanel(new GridLayout(2, 2));
+            panel.add(new JLabel("Description:"));
+            panel.add(descriptionField);
+            panel.add(new JLabel("Référence:"));
+            panel.add(referenceField);
+
+            int result = JOptionPane.showConfirmDialog(null, panel, "Editer Clause", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (result == JOptionPane.OK_OPTION) {
+                clause.setDescription(descriptionField.getText());
+                clause.setReference(referenceField.getText());
                 gestionClauses.updateClause(id, clause);
                 loadClauses();
             }

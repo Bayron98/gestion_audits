@@ -78,12 +78,20 @@ public class GestionStandardsUI extends JFrame {
     }
 
     private void addStandard() {
-        String description = JOptionPane.showInputDialog(this, "Description:");
-        String reference = JOptionPane.showInputDialog(this, "Référence:");
-        if (description != null && reference != null) {
+        JTextField descriptionField = new JTextField();
+        JTextField referenceField = new JTextField();
+
+        JPanel panel = new JPanel(new GridLayout(2, 2));
+        panel.add(new JLabel("Description:"));
+        panel.add(descriptionField);
+        panel.add(new JLabel("Référence:"));
+        panel.add(referenceField);
+
+        int result = JOptionPane.showConfirmDialog(null, panel, "Ajouter Standard", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        if (result == JOptionPane.OK_OPTION) {
             Standard standard = new Standard();
-            standard.setDescription(description);
-            standard.setReference(reference);
+            standard.setDescription(descriptionField.getText());
+            standard.setReference(referenceField.getText());
             gestionStandards.addStandard(standard);
             loadStandards();
         }
@@ -92,11 +100,19 @@ public class GestionStandardsUI extends JFrame {
     public void editStandard(int id) {
         Standard standard = gestionStandards.getStandard(id);
         if (standard != null) {
-            String description = JOptionPane.showInputDialog(this, "Description:", standard.getDescription());
-            String reference = JOptionPane.showInputDialog(this, "Référence:", standard.getReference());
-            if (description != null && reference != null) {
-                standard.setDescription(description);
-                standard.setReference(reference);
+            JTextField descriptionField = new JTextField(standard.getDescription());
+            JTextField referenceField = new JTextField(standard.getReference());
+
+            JPanel panel = new JPanel(new GridLayout(2, 2));
+            panel.add(new JLabel("Description:"));
+            panel.add(descriptionField);
+            panel.add(new JLabel("Référence:"));
+            panel.add(referenceField);
+
+            int result = JOptionPane.showConfirmDialog(null, panel, "Editer Standard", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (result == JOptionPane.OK_OPTION) {
+                standard.setDescription(descriptionField.getText());
+                standard.setReference(referenceField.getText());
                 gestionStandards.updateStandard(id, standard);
                 loadStandards();
             }

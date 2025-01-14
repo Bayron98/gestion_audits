@@ -6,72 +6,27 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ButtonEditor extends DefaultCellEditor {
+public class ButtonEditor<T> extends DefaultCellEditor {
     protected JButton button;
     private String label;
     private boolean isPushed;
-    private GestionStandardsUI gestionStandardsUI;
-    private GestionClausesUI gestionClausesUI;
-    private StandardDetailsUI standardDetailsUI;
-    private ClauseDetailsUI clauseDetailsUI;
+    private T context;
     private boolean isEdit;
     private boolean isView;
     private JTable table;
 
-    public ButtonEditor(JCheckBox checkBox, GestionStandardsUI gestionStandardsUI, boolean isEdit, boolean isView) {
+    public ButtonEditor(JCheckBox checkBox, T context, boolean isEdit, boolean isView) {
         super(checkBox);
-        this.gestionStandardsUI = gestionStandardsUI;
+        this.context = context;
         this.isEdit = isEdit;
         this.isView = isView;
         button = new JButton();
         button.setOpaque(true);
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                fireEditingStopped();
-            }
-        });
+        button.addActionListener(e -> fireEditingStopped());
     }
 
-    public ButtonEditor(JCheckBox checkBox, GestionClausesUI gestionClausesUI, boolean isEdit, boolean isView) {
-        super(checkBox);
-        this.gestionClausesUI = gestionClausesUI;
-        this.isEdit = isEdit;
-        this.isView = isView;
-        button = new JButton();
-        button.setOpaque(true);
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                fireEditingStopped();
-            }
-        });
-    }
-
-    public ButtonEditor(JCheckBox checkBox, StandardDetailsUI standardDetailsUI, boolean isEdit, boolean isView) {
-        super(checkBox);
-        this.standardDetailsUI = standardDetailsUI;
-        this.isEdit = isEdit;
-        this.isView = isView;
-        button = new JButton();
-        button.setOpaque(true);
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                fireEditingStopped();
-            }
-        });
-    }
-
-    public ButtonEditor(JCheckBox checkBox, ClauseDetailsUI clauseDetailsUI, boolean isEdit, boolean isView) {
-        super(checkBox);
-        this.clauseDetailsUI = clauseDetailsUI;
-        this.isEdit = isEdit;
-        this.isView = isView;
-        button = new JButton();
-        button.setOpaque(true);
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                fireEditingStopped();
-            }
-        });
+    public ButtonEditor(JCheckBox checkBox, T context) {
+        this(checkBox, context, false, false);
     }
 
     @Override
@@ -88,30 +43,41 @@ public class ButtonEditor extends DefaultCellEditor {
         if (isPushed) {
             int id = Integer.parseInt(table.getValueAt(table.getSelectedRow(), 0).toString());
             if (isView) {
-                if (gestionStandardsUI != null) {
-                    gestionStandardsUI.viewDetails(id);
-                } else if (gestionClausesUI != null) {
-                    gestionClausesUI.viewDetails(id);
+                if (context instanceof GestionStandardsUI) {
+                    ((GestionStandardsUI) context).viewDetails(id);
+                } else if (context instanceof GestionClausesUI) {
+                    ((GestionClausesUI) context).viewDetails(id);
+                }else if (context instanceof GestionSystemeManagementUI) {
+                    ((GestionSystemeManagementUI) context).viewDetails(id);
                 }
             } else if (isEdit) {
-                if (gestionStandardsUI != null) {
-                    gestionStandardsUI.editStandard(id);
-                } else if (gestionClausesUI != null) {
-                    gestionClausesUI.editClause(id);
-                } else if (standardDetailsUI != null) {
-                    standardDetailsUI.editClause(id);
-                } else if (clauseDetailsUI != null) {
-                    clauseDetailsUI.editStandard(id);
+                if (context instanceof GestionStandardsUI) {
+                    ((GestionStandardsUI) context).editStandard(id);
+                } else if (context instanceof GestionClausesUI) {
+                    ((GestionClausesUI) context).editClause(id);
+
+                }else if (context instanceof GestionSitesUI) {
+                    ((GestionSitesUI) context).editSite(id);
+                }else if (context instanceof GestionResponsablesUI) {
+                    ((GestionResponsablesUI) context).editResponsable(id);
+                }else if (context instanceof GestionSystemeManagementUI) {
+                    ((GestionSystemeManagementUI) context).editSystemeManagement(id);
+                }else if (context instanceof SystemeManagementDetailsUI) {
+                    ((SystemeManagementDetailsUI) context).editProcessus(id);
                 }
             } else {
-                if (gestionStandardsUI != null) {
-                    gestionStandardsUI.deleteStandard(id);
-                } else if (gestionClausesUI != null) {
-                    gestionClausesUI.deleteClause(id);
-                } else if (standardDetailsUI != null) {
-                    standardDetailsUI.deleteClause(id);
-                } else if (clauseDetailsUI != null) {
-                    clauseDetailsUI.deleteStandard(id);
+                if (context instanceof GestionStandardsUI) {
+                    ((GestionStandardsUI) context).deleteStandard(id);
+                } else if (context instanceof GestionClausesUI) {
+                    ((GestionClausesUI) context).deleteClause(id);
+                }else if (context instanceof GestionSitesUI) {
+                    ((GestionSitesUI) context).deleteSite(id);
+                }else if (context instanceof GestionResponsablesUI) {
+                    ((GestionResponsablesUI) context).deleteResponsable(id);
+                }else if (context instanceof GestionSystemeManagementUI) {
+                    ((GestionSystemeManagementUI) context).deleteSystemeManagement(id);
+                }else if (context instanceof SystemeManagementDetailsUI) {
+                    ((SystemeManagementDetailsUI) context).deleteProcessus(id);
                 }
             }
         }

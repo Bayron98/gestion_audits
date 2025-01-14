@@ -10,6 +10,11 @@ public class DashboardAdmin extends JFrame {
     private JButton gestionStandardsButton;
     private JButton gestionClausesButton;
     private JButton logoutButton;
+    private JButton gestionSitesButton;
+    private JButton gestionResponsablesButton;
+    private JButton gestionOrganisationButton;
+    private JButton gestionProcessusButton;
+    private JButton gestionSystemeManagementButton;
     private JPanel mainPanel;
     private JLabel userLabel;
 
@@ -34,15 +39,20 @@ public class DashboardAdmin extends JFrame {
 
         gestionStandardsButton = new JButton("Gérer les Standards");
         gestionClausesButton = new JButton("Gérer les Clauses");
+        gestionSitesButton = new JButton("Gérer les Sites");
+        gestionResponsablesButton = new JButton("Gérer les Responsables");
+        gestionOrganisationButton = new JButton("Gérer l'Organisation");
+        gestionProcessusButton = new JButton("Gérer les Processus");
+        gestionSystemeManagementButton = new JButton("Gérer le Système de Management");
         logoutButton = new JButton("Se Déconnecter");
 
         navbar.add(gestionStandardsButton);
         navbar.add(gestionClausesButton);
-        navbar.add(new JLabel()); // Empty space
-        navbar.add(new JLabel()); // Empty space
-        navbar.add(new JLabel()); // Empty space
-        navbar.add(new JLabel()); // Empty space
-        navbar.add(new JLabel()); // Empty space
+        navbar.add(gestionSitesButton);
+        navbar.add(gestionResponsablesButton);
+        navbar.add(gestionOrganisationButton);
+        navbar.add(gestionProcessusButton);
+        navbar.add(gestionSystemeManagementButton);
         navbar.add(new JLabel()); // Empty space
         navbar.add(new JLabel()); // Empty space
         navbar.add(logoutButton);
@@ -50,9 +60,13 @@ public class DashboardAdmin extends JFrame {
         mainPanel = new JPanel();
         mainPanel.setLayout(new CardLayout());
 
+        JScrollPane scrollPane = new JScrollPane(mainPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
         add(header, BorderLayout.NORTH);
         add(navbar, BorderLayout.WEST);
-        add(mainPanel, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
 
         gestionStandardsButton.addActionListener(new ActionListener() {
             @Override
@@ -65,6 +79,43 @@ public class DashboardAdmin extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 showGestionClauses();
+            }
+        });
+
+        gestionSitesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showGestionSites();
+            }
+        });
+
+;
+
+        gestionOrganisationButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showGestionOrganisation();
+            }
+        });
+
+        gestionResponsablesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showGestionResponsables();
+            }
+        });
+
+        gestionProcessusButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showGestionProcessus();
+            }
+        });
+
+        gestionSystemeManagementButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showGestionSystemeManagement();
             }
         });
 
@@ -89,6 +140,44 @@ public class DashboardAdmin extends JFrame {
         mainPanel.revalidate();
         mainPanel.repaint();
     }
+
+    private void showGestionSites() {
+        mainPanel.removeAll();
+        mainPanel.add(new GestionSitesUI().getContentPane());
+        mainPanel.revalidate();
+        mainPanel.repaint();
+    }
+
+
+
+    private void showGestionOrganisation() {
+        mainPanel.removeAll();
+        mainPanel.add(new GestionOrganisationUI().getContentPane());
+        mainPanel.revalidate();
+        mainPanel.repaint();
+    }
+
+    private void showGestionResponsables() {
+        mainPanel.removeAll();
+        mainPanel.add(new GestionResponsablesUI().getContentPane());
+        mainPanel.revalidate();
+        mainPanel.repaint();
+    }
+
+    private void showGestionProcessus() {
+        mainPanel.removeAll();
+        mainPanel.add(new GestionProcessusUI().getContentPane());
+        mainPanel.revalidate();
+        mainPanel.repaint();
+    }
+
+    private void showGestionSystemeManagement() {
+        mainPanel.removeAll();
+        mainPanel.add(new GestionSystemeManagementUI().getContentPane());
+        mainPanel.revalidate();
+        mainPanel.repaint();
+    }
+
 
     private void logout() {
         new Login().setVisible(true);
