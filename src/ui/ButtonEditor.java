@@ -2,6 +2,9 @@ package ui;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
+
+import service.GestionUsers;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -49,6 +52,10 @@ public class ButtonEditor<T> extends DefaultCellEditor {
                     ((GestionClausesUI) context).viewDetails(id);
                 }else if (context instanceof GestionSystemeManagementUI) {
                     ((GestionSystemeManagementUI) context).viewDetails(id);
+                }else if (context instanceof GestionAuditUI) {
+                    ((GestionAuditUI) context).viewDetails(id);
+                }else if(context instanceof DashboardAuditeur){
+                    ((DashboardAuditeur) context).viewDetails(id);
                 }
             } else if (isEdit) {
                 if (context instanceof GestionStandardsUI) {
@@ -64,6 +71,16 @@ public class ButtonEditor<T> extends DefaultCellEditor {
                     ((GestionSystemeManagementUI) context).editSystemeManagement(id);
                 }else if (context instanceof SystemeManagementDetailsUI) {
                     ((SystemeManagementDetailsUI) context).editProcessus(id);
+                }else if (context instanceof GestionUsersUI) {
+                    ((GestionUsersUI) context).editUser(id);
+                }else if (context instanceof GestionAuditUI) {
+                    ((GestionAuditUI) context).editAudit(id);
+                }else if (context instanceof AuditDetailsUI) {
+                    ((AuditDetailsUI) context).editSystemeExigence(id);
+                }else if (context instanceof DashboardAuditeur) {
+                    ((DashboardAuditeur) context).editAudit(id);
+                }else if (context instanceof GestionActionUI ) {
+                    ((GestionActionUI) context).editAction(id);
                 }
             } else {
                 if (context instanceof GestionStandardsUI) {
@@ -78,6 +95,12 @@ public class ButtonEditor<T> extends DefaultCellEditor {
                     ((GestionSystemeManagementUI) context).deleteSystemeManagement(id);
                 }else if (context instanceof SystemeManagementDetailsUI) {
                     ((SystemeManagementDetailsUI) context).deleteProcessus(id);
+                }else if (context instanceof GestionUsersUI) {
+                    ((GestionUsersUI) context).deleteUser(id);
+                }else if (context instanceof GestionAuditUI) {
+                    ((GestionAuditUI) context).deleteAudit(id);
+                }else if (context instanceof GestionActionUI) {
+                    ((GestionActionUI) context).deleteAction(id);
                 }
             }
         }

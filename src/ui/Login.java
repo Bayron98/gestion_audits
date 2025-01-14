@@ -68,7 +68,7 @@ public class Login extends JFrame {
         if (user.getRole().equals("admin")) {
             new DashboardAdmin(user).setVisible(true);
         } else if (user.getRole().equals("auditeur")) {
-            // new DashboardAuditeur(user).setVisible(true);
+            new DashboardAuditeur(user).setVisible(true);
         }
         this.dispose();
     }

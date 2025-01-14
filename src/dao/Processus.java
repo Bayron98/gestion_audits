@@ -32,9 +32,11 @@ public class Processus implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
     public Responsable getResponsable() {
         return responsable;
     }
+
     public void setResponsable(Responsable responsable) {
         this.responsable = responsable;
     }

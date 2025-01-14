@@ -7,6 +7,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class DashboardAdmin extends JFrame {
+    private JButton gestionUsersButton;
+    private JButton gestionAuditButton;
+    private JButton gestionActionButton;
     private JButton gestionStandardsButton;
     private JButton gestionClausesButton;
     private JButton logoutButton;
@@ -34,9 +37,12 @@ public class DashboardAdmin extends JFrame {
         header.add(userLabel, BorderLayout.CENTER);
 
         JPanel navbar = new JPanel();
-        navbar.setLayout(new GridLayout(10, 1)); // 10 rows, 1 column
+        navbar.setLayout(new GridLayout(11, 1)); // 10 rows, 1 column
         navbar.setBackground(Color.LIGHT_GRAY); // Changer la couleur de fond de la navbar
 
+        gestionUsersButton = new JButton("Gérer les Utilisateurs");
+        gestionAuditButton = new JButton("Gérer les Audits");
+        gestionActionButton = new JButton("Gérer les Actions");
         gestionStandardsButton = new JButton("Gérer les Standards");
         gestionClausesButton = new JButton("Gérer les Clauses");
         gestionSitesButton = new JButton("Gérer les Sites");
@@ -46,6 +52,9 @@ public class DashboardAdmin extends JFrame {
         gestionSystemeManagementButton = new JButton("Gérer le Système de Management");
         logoutButton = new JButton("Se Déconnecter");
 
+        navbar.add(gestionUsersButton);
+        navbar.add(gestionAuditButton);
+        navbar.add(gestionActionButton);
         navbar.add(gestionStandardsButton);
         navbar.add(gestionClausesButton);
         navbar.add(gestionSitesButton);
@@ -53,12 +62,36 @@ public class DashboardAdmin extends JFrame {
         navbar.add(gestionOrganisationButton);
         navbar.add(gestionProcessusButton);
         navbar.add(gestionSystemeManagementButton);
-        navbar.add(new JLabel()); // Empty space
-        navbar.add(new JLabel()); // Empty space
         navbar.add(logoutButton);
 
         mainPanel = new JPanel();
         mainPanel.setLayout(new CardLayout());
+
+        // Ajouter des renseignements et un guide dans le mainPanel à l'accueil
+        JPanel homePanel = new JPanel(new GridLayout(3, 1));
+        JLabel welcomeLabel = new JLabel("Bienvenue sur le Tableau de Bord Admin", JLabel.CENTER);
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        homePanel.add(welcomeLabel);
+
+        JLabel infoLabel = new JLabel("Renseignements et Guide", JLabel.CENTER);
+        infoLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        homePanel.add(infoLabel);
+
+        JTextArea guideArea = new JTextArea();
+        guideArea.setText("1. Pour gérer les utilisateurs, cliquez sur 'Gérer les Utilisateurs'.\n"
+                + "2. Pour gérer les audits, cliquez sur 'Gérer les Audits'.\n"
+                + "3. Pour gérer les standards, cliquez sur 'Gérer les Standards'.\n"
+                + "4. Pour gérer les clauses, cliquez sur 'Gérer les Clauses'.\n"
+                + "5. Pour gérer les sites, cliquez sur 'Gérer les Sites'.\n"
+                + "6. Pour gérer les responsables, cliquez sur 'Gérer les Responsables'.\n"
+                + "7. Pour gérer l'organisation, cliquez sur 'Gérer l'Organisation'.\n"
+                + "8. Pour gérer les processus, cliquez sur 'Gérer les Processus'.\n"
+                + "9. Pour gérer le système de management, cliquez sur 'Gérer le Système de Management'.\n"
+                + "10. Pour vous déconnecter, cliquez sur 'Se Déconnecter'.");
+        guideArea.setEditable(false);
+        homePanel.add(guideArea);
+
+        mainPanel.add(homePanel, "home");
 
         JScrollPane scrollPane = new JScrollPane(mainPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -67,6 +100,27 @@ public class DashboardAdmin extends JFrame {
         add(header, BorderLayout.NORTH);
         add(navbar, BorderLayout.WEST);
         add(scrollPane, BorderLayout.CENTER);
+
+        gestionUsersButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showGestionUsers();
+            }
+        });
+
+        gestionAuditButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showGestionAudit();
+            }
+        });
+
+        gestionActionButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showGestionAction();
+            }
+        });
 
         gestionStandardsButton.addActionListener(new ActionListener() {
             @Override
@@ -88,8 +142,6 @@ public class DashboardAdmin extends JFrame {
                 showGestionSites();
             }
         });
-
-;
 
         gestionOrganisationButton.addActionListener(new ActionListener() {
             @Override
@@ -125,6 +177,30 @@ public class DashboardAdmin extends JFrame {
                 logout();
             }
         });
+
+        // Afficher le panneau d'accueil par défaut
+        CardLayout cl = (CardLayout) mainPanel.getLayout();
+        cl.show(mainPanel, "home");
+    }
+
+    private void showGestionUsers() {
+        mainPanel.removeAll();
+        mainPanel.add(new GestionUsersUI().getContentPane());
+        mainPanel.revalidate();
+        mainPanel.repaint();
+    }
+
+    public void showGestionAudit() {
+        mainPanel.removeAll();
+        mainPanel.add(new GestionAuditUI().getContentPane());
+        mainPanel.revalidate();
+        mainPanel.repaint();
+    }
+    public void showGestionAction(){
+        mainPanel.removeAll();
+        mainPanel.add(new GestionActionUI().getContentPane());
+        mainPanel.revalidate();
+        mainPanel.repaint();
     }
 
     private void showGestionStandards() {
@@ -147,8 +223,6 @@ public class DashboardAdmin extends JFrame {
         mainPanel.revalidate();
         mainPanel.repaint();
     }
-
-
 
     private void showGestionOrganisation() {
         mainPanel.removeAll();
@@ -177,7 +251,6 @@ public class DashboardAdmin extends JFrame {
         mainPanel.revalidate();
         mainPanel.repaint();
     }
-
 
     private void logout() {
         new Login().setVisible(true);

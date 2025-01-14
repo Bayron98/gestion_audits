@@ -6,13 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GestionUsers {
-    private static final String FILE_PATH = System.getProperty("user.dir") + "/src/database/users.txt";
+    private static final String FILE_PATH = System.getProperty("user.dir") + "/src/database/users.ser";
 
     public void addUser(User user) {
         List<User> users = getAllUsers();
         users.add(user);
         saveUsersToFile(users);
     }
+
 
     public User getUser(int id) {
         List<User> users = getAllUsers();
@@ -26,17 +27,9 @@ public class GestionUsers {
 
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(FILE_PATH))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.split(",");
-                if (parts.length == 5) {
-                    User user = new User(parts[1], parts[2], parts[3], parts[4]);
-                    user.setId(Integer.parseInt(parts[0]));
-                    users.add(user);
-                }
-            }
-        } catch (IOException e) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_PATH))) {
+            users = (List<User>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return users;
@@ -60,11 +53,8 @@ public class GestionUsers {
     }
 
     private void saveUsersToFile(List<User> users) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_PATH))) {
-            for (User user : users) {
-                bw.write(user.getId() + "," + user.getName() + "," + user.getUsername() + "," + user.getPassword() + "," + user.getRole());
-                bw.newLine();
-            }
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH))) {
+            oos.writeObject(users);
         } catch (IOException e) {
             e.printStackTrace();
         }
